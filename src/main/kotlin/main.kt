@@ -61,16 +61,13 @@ fun addUser() {
 }
 
 fun listUsers() {
-    val users = userStore.findAll()                             // Fetches all users
-    if (users.isNotEmpty()) {
-        println("The user details are:")
-        users.forEach { user ->
-            println(user)
-        }
-    } else {
-        println("No users found.")
-    }
+    println("The user details are:")
+    userStore.findAll()
+        .sortedBy { it.name }
+        .forEach{println(it)}
 }
+
+
 
 fun menu(): Int{
     print("""
@@ -80,6 +77,7 @@ fun menu(): Int{
         |  3. Search by Id
         |  4. Delete
         |  5. Update User
+        |  6. Search by Gender
         |  0. Exit
         |Please enter your option: """.trimMargin())
     return readlnOrNull()?.toIntOrNull() ?: -1
@@ -95,6 +93,7 @@ fun runApp(){
             3 -> searchById()
             4 -> deleteUser()
             5 -> updateUser()
+            6 -> searchByGender()
             0 -> println("Bye...")
             else -> print("Invalid Option")
         }
@@ -113,6 +112,28 @@ fun searchById() {
     else
         println(user)
 }
+
+private fun searchByGender() {
+    val gender = readValidGender("Enter Gender (F, M, or O): ")
+    userStore.findAll()
+        .filter { it.gender.equals(gender, ignoreCase = true) }
+        .sortedBy { it.name }
+        .forEach { println(it) }
+}
+
+private fun readValidGender(prompt: String): Char {
+    while (true) {
+        print(prompt)
+        val inputGender = readLine()?.uppercase()
+        if (inputGender == "F" || inputGender == "M" || inputGender == "O") {
+            return inputGender[0]
+        } else {
+            println("Invalid input. Please enter F, M, or O.")
+        }
+    }
+}
+
+
 
 fun deleteUser(){
     if (userStore.delete(getUserById()))
