@@ -16,7 +16,7 @@ fun main(){
     runApp()
 }
 
-fun addUser() {
+fun getUserDetails(): User {
     val user = User()
     println("Please enter the following for the user:")
     print("    Name: ")
@@ -50,9 +50,14 @@ fun addUser() {
         }
     }
 
-    userStore.create(user)
-    //userStore.create(getUserDetails())
+    return user
 
+}
+
+fun addUser() {
+    val user = getUserDetails()
+    userStore.create(user)
+    println("User added successfully.")
 }
 
 fun listUsers() {
@@ -74,7 +79,7 @@ fun menu(): Int{
         |  2. List User
         |  3. Search by Id
         |  4. Delete
-        |  5. updateUser
+        |  5. Update User
         |  0. Exit
         |Please enter your option: """.trimMargin())
     return readlnOrNull()?.toIntOrNull() ?: -1
@@ -89,7 +94,7 @@ fun runApp(){
             2 -> listUsers()
             3 -> searchById()
             4 -> deleteUser()
-            in(4..6) -> println("Feature coming soon")
+            5 -> updateUser()
             0 -> println("Bye...")
             else -> print("Invalid Option")
         }
@@ -118,7 +123,23 @@ fun deleteUser(){
 
 
 
+fun updateUser() {
+    listUsers()
+    val foundUser = getUserById()
 
+    if(foundUser != null) {
+        //read in user data
+        val user = getUserDetails()
+        user.id = foundUser.id
+        //using the id from foundUser and the details read from the console, update the user.
+        if (userStore.update(user))
+            println("User updated")
+        else
+            println("User not updated")
+    }
+    else
+        println("User not found")
+}
 
 
 
