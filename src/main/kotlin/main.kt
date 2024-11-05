@@ -1,22 +1,32 @@
+import controllers.UserStore
 import models.User
 
-var user = User()
+
+
+
+//var user = User()
+
+val userStore = UserStore()
+
+
+
 
 fun main(){
     println("Welcome to Health Tracker")
     runApp()
 }
+
 fun addUser() {
+    val user = User()
     println("Please enter the following for the user:")
     print("    Name: ")
+
     user.name = readln()
 
 
     print("    Email: ")
     user.email = readln()
 
-    print("    Id: ")
-    user.id = readlnOrNull()?.toIntOrNull() ?: -1
 
 
     print("    Weight (kgs): ")
@@ -40,10 +50,21 @@ fun addUser() {
         }
     }
 
+    userStore.create(user)
+    //userStore.create(getUserDetails())
 
 }
-fun listUser(){
-    print("The user details are: $user")
+
+fun listUsers() {
+    val users = userStore.findAll()                             // Fetches all users
+    if (users.isNotEmpty()) {
+        println("The user details are:")
+        users.forEach { user ->
+            println(user)
+        }
+    } else {
+        println("No users found.")
+    }
 }
 
 fun menu(): Int{
@@ -51,6 +72,9 @@ fun menu(): Int{
         |Main Menu:
         |  1. Add User
         |  2. List User
+        |  3. Search by Id
+        |  4. Delete
+        |  5. updateUser
         |  0. Exit
         |Please enter your option: """.trimMargin())
     return readlnOrNull()?.toIntOrNull() ?: -1
@@ -62,15 +86,35 @@ fun runApp(){
         input = menu()
         when(input) {
             1 -> addUser()
-            2 -> listUser()
-            in(3..6) -> println("Feature coming soon")
+            2 -> listUsers()
+            3 -> searchById()
+            4 -> deleteUser()
+            in(4..6) -> println("Feature coming soon")
             0 -> println("Bye...")
             else -> print("Invalid Option")
         }
     } while (input != 0)
 }
 
+fun getUserById() : User?{
+    print("Enter the id of the user: ")
+    return  userStore.findOne(readlnOrNull()?.toIntOrNull() ?: -1)
+}
 
+fun searchById() {
+    val user = getUserById()
+    if (user == null)
+        println ("No user found")
+    else
+        println(user)
+}
+
+fun deleteUser(){
+    if (userStore.delete(getUserById()))
+        println ("User deleted")
+    else
+        println ("No user")
+}
 
 
 
