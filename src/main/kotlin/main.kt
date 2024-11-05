@@ -61,15 +61,10 @@ fun addUser() {
 }
 
 fun listUsers() {
-    val users = userStore.findAll()                             // Fetches all users
-    if (users.isNotEmpty()) {
-        println("The user details are:")
-        users.forEach { user ->
-            println(user)
-        }
-    } else {
-        println("No users found.")
-    }
+    println("The user details are:")
+    userStore.findAll()
+        .sortedBy { it.name }
+        .forEach{println(it)}
 }
 
 fun menu(): Int{
